@@ -13,6 +13,7 @@ public class Service {
     private int serviceId;
     private String date;
     private double totalBill;
+    private double discountAmount;
     private double givenAmount;
     private double returnAmount;
     private int tableNo;
@@ -21,20 +22,22 @@ public class Service {
     public Service() {
     }
 
-    public Service(int serviceId, String date, double totalBill, double givenAmount, double returnAmount, int tableNo, String servedBy) {
+    public Service(int serviceId, String date, double totalBill, double discountAmount, double givenAmount, double returnAmount, int tableNo, String servedBy) {
         this.serviceId = serviceId;
         this.date = date;
         this.totalBill = totalBill;
+        this.discountAmount = discountAmount;
         this.givenAmount = givenAmount;
         this.returnAmount = returnAmount;
         this.tableNo = tableNo;
         this.servedBy = servedBy;
     }
 
-    public Service(int serviceId, String date, double totalBill, String servedBy) {
+    public Service(int serviceId, String date, double totalBill, double discountAmount, String servedBy) {
         this.serviceId = serviceId;
         this.date = date;
         this.totalBill = totalBill;
+        this.discountAmount = discountAmount;
         this.servedBy = servedBy;
     }
 
@@ -48,6 +51,10 @@ public class Service {
 
     public double getTotalBill() {
         return totalBill;
+    }
+
+    public double getDiscountAmount() {
+        return discountAmount;
     }
 
     public double getGivenAmount() {

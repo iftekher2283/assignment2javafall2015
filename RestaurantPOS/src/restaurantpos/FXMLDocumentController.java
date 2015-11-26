@@ -100,6 +100,8 @@ public class FXMLDocumentController implements Initializable {
     String DB_URL = "jdbc:mysql://127.0.0.1/restaurantPOSdb";
     String DB_USER = "root";
     String DB_PASS = "123";
+    @FXML
+    private TextField discountAmountField;
     
       
     @Override
@@ -110,6 +112,7 @@ public class FXMLDocumentController implements Initializable {
         WaiterList = FXCollections.observableArrayList();
         Orders = FXCollections.observableArrayList();
         FoodMenu = FXCollections.observableArrayList();
+        discountAmountField.setText("0");
         for(int i = 0; i < 10; i++){
             TableNo.add(i, i+1);
         }
@@ -235,18 +238,19 @@ public class FXMLDocumentController implements Initializable {
         int serviceId = Integer.parseInt(serviceIdField.getText());
         String date = serviceDateBox.getValue() + "";
         double totalBill = Double.parseDouble(grandTotalField.getText());
+        double discountAmount = Double.parseDouble(discountAmountField.getText());
         double givenAmount = Double.parseDouble(paidAmountField.getText());
         double returnAmount = Double.parseDouble(returnAmountField.getText());
         int tableNo = Integer.parseInt(tableNoBox.getSelectionModel().getSelectedItem() + "");
         String servedBy = servedByBox.getSelectionModel().getSelectedItem();
         
-        Service service = new Service(serviceId, date, totalBill, givenAmount, returnAmount, tableNo, servedBy);
+        Service service = new Service(serviceId, date, totalBill, discountAmount, givenAmount, returnAmount, tableNo, servedBy);
         
         try {
             Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
             Statement statement = connection.createStatement();
             
-            String query = "insert into serviceDetails values(" + service.getServiceId() + ", '" + service.getDate() + "', " + service.getTotalBill() + "," + service.getGivenAmount() + "," + service.getReturnAmount() + "," + service.getTableNo() + ",'" + service.getServedBy() +"');";
+            String query = "insert into serviceDetails values(" + service.getServiceId() + ", '" + service.getDate() + "', " + service.getTotalBill() + "," + service.getDiscountAmount() + "," + service.getGivenAmount() + "," + service.getReturnAmount() + "," + service.getTableNo() + ",'" + service.getServedBy() +"');";
             statement.executeUpdate(query);
         } catch (SQLException ex) {
             Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
@@ -259,6 +263,7 @@ public class FXMLDocumentController implements Initializable {
         totalPriceField.setText("");
         vatField.setText("");
         serviceChargeField.setText("");
+        discountAmountField.setText("0");
         grandTotalField.setText("");
         paidAmountField.setText("");
         returnAmountField.setText("");
@@ -344,6 +349,14 @@ public class FXMLDocumentController implements Initializable {
         } catch (IOException ex) {
             Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @FXML
+    private void handleDiscountAmountField(ActionEvent event) {
+        double discountAmount = Double.parseDouble(discountAmountField.getText());
+        double grandTotal = Double.parseDouble(grandTotalField.getText());
+        grandTotal = grandTotal - discountAmount;
+        grandTotalField.setText(grandTotal + "");
     }
 
 }
