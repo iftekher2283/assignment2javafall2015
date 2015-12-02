@@ -67,7 +67,7 @@ public class LoginPanelController implements Initializable {
             
             while(userList.next()){
                 if(isManagerCheckBox.isSelected()){
-                    if(userName.equalsIgnoreCase(userList.getString("userName")) && password.equalsIgnoreCase(userList.getString("password")) && userList.getInt("isMangager") == 1){
+                    if(userName.equalsIgnoreCase(userList.getString("userName")) && password.equalsIgnoreCase(userList.getString("password")) && userList.getInt("isManager") == 1){
                         userCheck = 1;
                     }
                 }
@@ -78,7 +78,15 @@ public class LoginPanelController implements Initializable {
                 }
             }
             
-            if(userCheck == 2){
+            if(userCheck==1){
+                Parent root = FXMLLoader.load(getClass().getResource("ManagerPanelUI.fxml"));
+
+                Scene scene = new Scene(root);
+
+                RestaurantPOS.getMainStage().setScene(scene);
+                RestaurantPOS.getMainStage().show();
+            }
+            else if(userCheck == 2){
                 Parent root = FXMLLoader.load(getClass().getResource("OrderAndMenuUI.fxml"));
 
                 Scene scene = new Scene(root);

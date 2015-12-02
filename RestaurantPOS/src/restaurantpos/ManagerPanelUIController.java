@@ -544,8 +544,11 @@ public class ManagerPanelUIController implements Initializable {
         ServiceList.remove(0, ServiceList.size());
         OrderList.remove(0, OrderList.size());
         String month = monthStatementBox.getSelectionModel().getSelectedItem() + "";
+        
         dateStatementBox.getSelectionModel().clearSelection();
+        
         String servedBy = servedByStatementBox.getSelectionModel().getSelectedItem();
+        
         
         int intMonth = 0;
         switch(month){

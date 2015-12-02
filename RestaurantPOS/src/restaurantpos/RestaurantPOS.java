@@ -21,7 +21,7 @@ public class RestaurantPOS extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         mainStage = stage;
-        Parent root = FXMLLoader.load(getClass().getResource("ManagerPanelUI.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("LoginPanel.fxml"));
         
         Scene scene = new Scene(root);
         
