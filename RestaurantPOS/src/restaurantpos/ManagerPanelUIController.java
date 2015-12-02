@@ -193,21 +193,7 @@ public class ManagerPanelUIController implements Initializable {
         serviceDateStatementColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getDate()));
         serviceBillStatementColumn.setCellValueFactory(d -> new SimpleDoubleProperty(d.getValue().getTotalBill()));
         servedByStatementColumn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getServedBy()));
-        
-        try {
-            Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
-            Statement statement = connection.createStatement();
-            
-            String query = "select * from waiters";
-            ResultSet waiters = statement.executeQuery(query);
-            
-            while(waiters.next()){
-                Waiter waiter = new Waiter(waiters.getInt("id"), waiters.getString("name"), waiters.getString("address"), waiters.getString("phone"), waiters.getString("voterIdNumber"));
-                WaiterList.add(waiter.getName());
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(ManagerPanelUIController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+     
         servedByStatementBox.setItems(WaiterList);
         dateStatementBox.setItems(Dates);
         
@@ -468,6 +454,20 @@ public class ManagerPanelUIController implements Initializable {
                 Dates.add(i);
             }
         }
+        try {
+            Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+            Statement statement = connection.createStatement();
+            
+            String query = "select * from waiters";
+            ResultSet waiters = statement.executeQuery(query);
+            
+            while(waiters.next()){
+                Waiter waiter = new Waiter(waiters.getInt("id"), waiters.getString("name"), waiters.getString("address"), waiters.getString("phone"), waiters.getString("voterIdNumber"));
+                WaiterList.add(waiter.getName());
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ManagerPanelUIController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         int intMonth = 0;
         switch(month){
             case "January":
@@ -536,14 +536,166 @@ public class ManagerPanelUIController implements Initializable {
         discountAmountStatementField.setText("");
         grandTotalStatementField.setText("");
         totalServiceAmountStatementField.setText(totalServiceAmount + "");
+        servedByStatementBox.getSelectionModel().clearSelection();
     }
 
     @FXML
     private void handleServedByStatementAction(ActionEvent event) {
+        ServiceList.remove(0, ServiceList.size());
+        OrderList.remove(0, OrderList.size());
+        String month = monthStatementBox.getSelectionModel().getSelectedItem() + "";
+        dateStatementBox.getSelectionModel().clearSelection();
+        String servedBy = servedByStatementBox.getSelectionModel().getSelectedItem();
+        
+        int intMonth = 0;
+        switch(month){
+            case "January":
+                intMonth = 1;
+                break;
+            case "February":
+                intMonth = 2;
+                break;
+            case "March":
+                intMonth = 3;
+                break;
+            case "April":
+                intMonth = 4;
+                break;
+            case "May":
+                intMonth = 5;
+                break;
+            case "June":
+                intMonth = 6;
+                break;
+            case "July":
+                intMonth = 7;
+                break;
+            case "August":
+                intMonth = 8;
+                break;
+            case "September":
+                intMonth = 9;
+                break;
+            case "October":
+                intMonth = 10;
+                break;
+            case "November":
+                intMonth = 11;
+                break;
+            case "December":
+                intMonth = 12;
+                break;
+        }
+        
+        double totalServiceAmount = 0.0;
+        try {
+            Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+            Statement statement = connection.createStatement();
+            
+            String query = "select * from serviceDetails";
+            ResultSet services = statement.executeQuery(query);
+            
+            while(services.next()){
+                String getDate = services.getString("date");
+                String tokens[] = getDate.split("-");
+                int getIntMonth = Integer.parseInt(tokens[1]);
+                
+                if(getIntMonth == intMonth && dateStatementBox.getSelectionModel().isEmpty() && services.getString("servedBy").equalsIgnoreCase(servedBy)){
+                    Service service = new Service(services.getInt("serviceId"), services.getString("date"), services.getDouble("totalBill"), services.getDouble("discountAmount"), services.getString("servedBy"));
+                    totalServiceAmount = totalServiceAmount + service.getTotalBill();
+                    ServiceList.add(service);    
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ManagerPanelUIController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        totalOrderAmountStatementField.setText("");
+        vatStatementField.setText("");
+        serviceChargeStatementField.setText("");
+        discountAmountStatementField.setText("");
+        grandTotalStatementField.setText("");
+        totalServiceAmountStatementField.setText(totalServiceAmount + "");
+    
     }
 
     @FXML
     private void handleDateStatementAction(ActionEvent event) {
+        ServiceList.remove(0, ServiceList.size());
+        OrderList.remove(0, OrderList.size());
+        
+        String month = monthStatementBox.getSelectionModel().getSelectedItem() + "";
+        int date = Integer.parseInt(dateStatementBox.getSelectionModel().getSelectedItem() + "");
+        servedByStatementBox.getSelectionModel().clearSelection();
+        
+        int intMonth = 0;
+        switch(month){
+            case "January":
+                intMonth = 1;
+                break;
+            case "February":
+                intMonth = 2;
+                break;
+            case "March":
+                intMonth = 3;
+                break;
+            case "April":
+                intMonth = 4;
+                break;
+            case "May":
+                intMonth = 5;
+                break;
+            case "June":
+                intMonth = 6;
+                break;
+            case "July":
+                intMonth = 7;
+                break;
+            case "August":
+                intMonth = 8;
+                break;
+            case "September":
+                intMonth = 9;
+                break;
+            case "October":
+                intMonth = 10;
+                break;
+            case "November":
+                intMonth = 11;
+                break;
+            case "December":
+                intMonth = 12;
+                break;
+        }
+        
+        double totalServiceAmount = 0.0;
+        try {
+            Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+            Statement statement = connection.createStatement();
+            
+            String query = "select * from serviceDetails";
+            ResultSet services = statement.executeQuery(query);
+            
+            while(services.next()){
+                String getDate = services.getString("date");
+                String tokens[] = getDate.split("-");
+                int getIntMonth = Integer.parseInt(tokens[1]);
+                int getIntDate = Integer.parseInt(tokens[2]);
+                
+                if(getIntMonth == intMonth && getIntDate == date){
+                    Service service = new Service(services.getInt("serviceId"), services.getString("date"), services.getDouble("totalBill"), services.getDouble("discountAmount"), services.getString("servedBy"));
+                    totalServiceAmount = totalServiceAmount + service.getTotalBill();
+                    ServiceList.add(service);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ManagerPanelUIController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        totalOrderAmountStatementField.setText("");
+        vatStatementField.setText("");
+        serviceChargeStatementField.setText("");
+        discountAmountStatementField.setText("");
+        grandTotalStatementField.setText("");
+        totalServiceAmountStatementField.setText(totalServiceAmount + "");
     }
 
     @FXML
